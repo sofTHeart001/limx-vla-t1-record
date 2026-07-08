@@ -14,19 +14,28 @@
 | 训练 seed | 0 |
 | 最佳验证损失 | 0.028757，epoch 5125 |
 | 本地公开 100 seed 评估 | `sr = 0.52` |
+| 策略部署演示 | seed `20260631`，138 步成功 |
 | 官方提交 | 已提交，queue id `#70` |
 
 本地评估结果保存在 [records/t1_public_eval.json](records/t1_public_eval.json)，完整记录见 [records/t1_record.md](records/t1_record.md)。
 
-## 视频展示
+## 策略部署演示
 
-下面是一次 T1 采集样例，用于展示任务形态和双臂操作场景。
+下面是训练后的 ACT policy 在 T1 环境中的一次成功 rollout。该视频不是专家演示，而是加载训练得到的 `policy_best.ckpt` 后，由策略闭环控制机器人完成任务。
+
+![T1 policy rollout success](media/t1_policy_rollout_success_seed_20260631.gif)
+
+原始 MP4：[`media/t1_policy_rollout_success_seed_20260631.mp4`](media/t1_policy_rollout_success_seed_20260631.mp4)
+
+这次 rollout 使用公开 seed `20260631`，在 138 个策略步内触发成功条件。
+
+## 数据采集样例
+
+下面是一次 T1 专家/数据采集样例，用于对比任务形态和演示数据来源。
 
 ![T1 collect demo](media/t1_collect_demo_episode43.gif)
 
 原始 MP4：[`media/t1_collect_demo_episode43.mp4`](media/t1_collect_demo_episode43.mp4)
-
-说明：当前视频是专家/数据采集样例，不是最终策略 rollout。后续会补充策略成功、失败案例对比视频，用于分析模型在不同 seed 下的行为差异。
 
 ## 技术路线
 
@@ -65,6 +74,7 @@ ACT 数据预处理
 - 基于 T1 `adjust_bottle` 任务采集 200 条本地演示数据。
 - 完成 ACT 数据处理和模型训练。
 - 对 `policy_best.ckpt` 做公开 100 seed 本地评估。
+- 录制成功的策略部署 rollout，用于展示训练后模型的闭环执行效果。
 - 将模型提交到官方评测队列。
 - 整理项目记录仓库，排除大体积数据、权重和敏感凭据。
 
@@ -82,6 +92,8 @@ records/
   t1_record.md             # T1 训练、评估、提交记录
   t1_public_eval.json      # 本地公开 seed 评估结果
 media/
+  t1_policy_rollout_success_seed_20260631.gif
+  t1_policy_rollout_success_seed_20260631.mp4
   t1_collect_demo_episode43.gif
   t1_collect_demo_episode43.mp4
 recipes/
@@ -89,6 +101,7 @@ recipes/
   train/                   # ACT 训练相关脚本
 scripts/                   # 一键采集、处理、训练、评估、提交入口
 starter/                   # 本地评估和可视化入口
+  record_policy_rollout.py # 单 seed/搜索成功 seed 的策略部署录制脚本
 submit/                    # 官方提交脚本
 ```
 
@@ -112,7 +125,7 @@ submit/                    # 官方提交脚本
 - checkpoint 选择：对比 `policy_best`、`policy_last` 和不同 epoch checkpoint 的 rollout 成功率。
 - 训练随机性：用不同训练 seed 复现实验，观察成功率波动。
 - 数据规模：比较 200、更多演示数据下的 ACT 表现。
-- 失败分析：录制成功/失败 rollout，对比瓶子姿态、夹爪动作和关键时刻偏差。
+- 失败分析：继续录制失败 rollout，对比瓶子姿态、夹爪动作和关键时刻偏差。
 - 评估稳定性：多次 repeat 和不同公开 seed 子集下的成功率置信区间。
 - 任务迁移：尝试从 T1 扩展到 T2/T3，并记录需要改动的策略和工程点。
 
@@ -127,6 +140,7 @@ make collect TRACK=T1 GPU=0
 make process TRACK=T1
 make train TRACK=T1 SEED=0 GPU=0
 python starter/eval_local.py --track T1 --ckpt-dir <ACT_CKPT_DIR>
+python starter/record_policy_rollout.py --track T1 --ckpt-dir <ACT_CKPT_DIR> --seed 20260631
 make submit TRACK=T1
 ```
 

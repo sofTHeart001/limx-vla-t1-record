@@ -8,6 +8,7 @@
 - 方法：ACT imitation learning
 - 本地公开 seed 评估：`sr = 0.52`
 - 官方提交队列编号：`#70`
-- 视频展示：`media/t1_collect_demo_episode43.gif`
+- 策略部署视频：`media/t1_policy_rollout_success_seed_20260631.gif`
+- 采集样例视频：`media/t1_collect_demo_episode43.gif`
 
 该仓库不包含训练数据、checkpoint、processed data、日志和 token。

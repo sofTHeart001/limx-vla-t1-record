@@ -27,6 +27,18 @@
 
 结论：当前 checkpoint 可以跑通完整提交流程，但 `sr = 0.52` 只是边缘过线水平，后续仍需要继续优化数据、训练 seed 和 checkpoint 选择。
 
+## 策略部署演示
+
+已录制一次成功的策略 rollout：
+
+- seed：`20260631`
+- 结果：成功
+- 步数：138
+- GIF：[`media/t1_policy_rollout_success_seed_20260631.gif`](../media/t1_policy_rollout_success_seed_20260631.gif)
+- MP4：[`media/t1_policy_rollout_success_seed_20260631.mp4`](../media/t1_policy_rollout_success_seed_20260631.mp4)
+
+该视频是加载训练后的 ACT checkpoint 后由策略闭环执行得到，不是专家采集视频。
+
 ## 官方提交
 
 - 提交赛道：T1
@@ -38,7 +50,7 @@
 
 - 对比不同 epoch checkpoint 的 rollout 成功率，而不是只看 validation loss。
 - 用不同训练 seed 重训，估计模型稳定性。
-- 增加成功/失败 rollout 视频，做动作偏差分析。
+- 增加更多成功/失败 rollout 视频，做动作偏差分析。
 - 增加数据量和数据覆盖度，观察成功率变化。
 - 将流程迁移到 T2/T3 任务。
 
