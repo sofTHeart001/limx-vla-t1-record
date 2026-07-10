@@ -1,10 +1,10 @@
 <div align="center">
 
-# TronCamp Mani T1-T4
+# Hierarchically Decoupled ACT Imitation Learning for Bimanual Robots
 
-### 机器人模仿学习综合项目
+### A TronCamp Mani T1-T4 Bimanual Manipulation Project
 
-基于 RoboTwin 双臂仿真环境，完成 T1-T4 机器人操作任务的数据采集、ACT 策略训练、本地评估、可视化展示，并扩展 InterACT 风格的双臂协同策略结构。
+Built on RoboTwin bimanual simulation, this project covers expert trajectory collection, ACT policy training, local evaluation, visual rollout demos, and an InterACT-style hierarchical decoupled policy branch for bimanual coordination.
 
 ![Python](https://img.shields.io/badge/Python-3.10-3776AB?logo=python&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch-ACT%20%2F%20InterACT-EE4C2C?logo=pytorch&logoColor=white)
