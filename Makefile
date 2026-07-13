@@ -54,4 +54,4 @@ submit:
 	fi
 
 structure:
-	find . -maxdepth 3 -not -path './.git*' -not -path './.agents*' -not -path './.codex*' | sort
+	find . -maxdepth 3 -not -path './.*' | sort

@@ -2,7 +2,7 @@
 
 The heavy ACT-in-process backend (sim/torch/RoboTwin) is smoke-tested on a GPU
 separately; here we only cover the player-code-shadow resolver, which is pure
-filesystem + sys.path manipulation (codex route① #3).
+filesystem + sys.path manipulation.
 """
 import os
 import sys

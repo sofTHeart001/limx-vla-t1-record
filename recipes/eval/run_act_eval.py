@@ -112,20 +112,19 @@ def build_configs(ep, task_name, task_config, ckpt_setting, ckpt_dir, state_dim,
             seed=0,
         )
     )
-    # FORCE policy_name=ACT (codex H2): the deploy yaml must NOT be able to redirect the
-    # eval_function_decorator import to an arbitrary module — route ① only ever runs the ACT
-    # policy (a player's code package shadows policy/ACT by name via PYTHONPATH, still "ACT").
+    # FORCE policy_name=ACT: the deploy yaml must not redirect eval_function_decorator to an
+    # arbitrary module. Player code can still shadow policy/ACT through PYTHONPATH.
     usr["policy_name"] = "ACT"
     usr.setdefault("instruction_type", "unseen")
 
     with open(f"./task_config/{task_config}.yml", "r", encoding="utf-8") as f:
         args = yaml.load(f.read(), Loader=yaml.FullLoader)
     # The backend deliberately skips the upstream expert pass + instruction (vanilla ACT, no
-    # language). eval_policy defaults expert_check=True, so fail LOUD if a config still expects
-    # the expert path rather than silently diverging from official eval semantics (codex M4).
+    # language). eval_policy defaults expert_check=True, so fail loudly if a config still expects
+    # the expert path rather than silently diverging from official eval semantics.
     if args.get("expert_check") is not False:
         raise SystemExit(
-            f"{task_config}.yml: expert_check must be false for ACT route-① eval, "
+            f"{task_config}.yml: expert_check must be false for ACT eval, "
             f"got {args.get('expert_check')!r}")
     args["task_name"] = task_name
     args["task_config"] = task_config
@@ -204,8 +203,8 @@ def make_backend(ep, TASK_ENV, args, model, eval_func, reset_func, track, grippe
     off_anchor = [[9.0, 9.0, 0.0], [9.0, 9.0, 0.0], [9.0, 9.0, 0.0]]  # scores graded 0
 
     def backend(episode_seed: int, repeat_idx: int, task: str) -> EpisodeOutcome:
-        # Guard track<->env binding (codex M3): run_contract passes the authoritative
-        # TASK_BY_TRACK[track]; refuse to score a different env under this track's contract.
+        # Guard track<->env binding: run_contract passes the authoritative TASK_BY_TRACK[track];
+        # refuse to score a different env under this track's contract.
         if task != args["task_name"]:
             raise SystemExit(f"track task {task!r} != configured env task {args['task_name']!r}")
         # mirrors eval_policy's policy block: setup the SAME scene, reset, roll out until the
@@ -241,7 +240,7 @@ def make_backend(ep, TASK_ENV, args, model, eval_func, reset_func, track, grippe
 
 
 def shadow_player_act(player_code_root: str | None) -> None:
-    """Make a player's code-package `policy/ACT` shadow the official ACT (codex route① #3).
+    """Make a player's code-package `policy/ACT` shadow the official ACT.
 
     The spec requires player code to actually run (§6: "4 题都用选手代码跑"). `import ACT`
     resolves via sys.path, and the trusted root's `policy` dir was put on the path first, so the
@@ -305,7 +304,7 @@ def parse_args():
     p.add_argument("--gripper-open-threshold", type=float, default=0.5)
     p.add_argument("--player-code-root", default=None,
                    help="player code package root; its policy/ACT shadows the official ACT "
-                        "(codex route① #3). Omit to run the official ACT.")
+                        "package. Omit to run the official ACT.")
     p.add_argument("--out", default="result.json")
     # probe mode
     p.add_argument("--probe", action="store_true",
@@ -340,7 +339,7 @@ def main() -> int:
 
     if not a.track or not a.seeds:
         raise SystemExit("eval mode requires --track and --seeds")
-    # Authoritative task is track-derived (codex M3): --task-name is NOT honored in eval, so a
+    # Authoritative task is track-derived: --task-name is NOT honored in eval, so a
     # T1 contract can never be made to score another env. (--task-name stays a probe-only knob.)
     task_name = TASK_BY_TRACK[a.track]
     task_config = a.task_config or f"{task_name}_clean"
@@ -351,7 +350,7 @@ def main() -> int:
     usr, args = build_configs(ep, task_name, task_config, a.ckpt_setting, a.ckpt_dir,
                               a.state_dim, a.temporal_agg, a.deploy_config)
 
-    # Shadow the official ACT with the player's code package (codex route① #3). MUST happen
+    # Shadow the official ACT with the player's code package. MUST happen
     # AFTER build_configs (which imports the trusted envs/eval_policy into sys.modules) and
     # BEFORE eval_function_decorator imports ACT — so only the not-yet-imported top-level `ACT`
     # resolves to the player's; trusted envs/sim/eval_policy stay the cached official ones.
@@ -366,9 +365,8 @@ def main() -> int:
     backend = make_backend(ep, TASK_ENV, args, model, eval_func, reset_func,
                            a.track, a.gripper_open_threshold)
     result = run_contract(seed_table, a.track, a.repeats, backend)
-    # result契约的权威投递通道 = STDOUT(worker 从 stdout 取分,见 worker HIGH#1)。--out 仅归档:
-    # best-effort(codex route① my#3:降权子进程可能写不动 worker-owned 归档目录,绝不能因此
-    # 让一次成功 eval 失败 / 在打印 stdout 前崩)。
+    # result契约的权威投递通道 = STDOUT(worker 从 stdout 取分)。--out 仅归档:
+    # best-effort; 降权子进程可能写不动 worker-owned 归档目录,绝不能因此让一次成功 eval 失败。
     try:
         write_result(result, a.out)
     except OSError as e:
