@@ -73,9 +73,9 @@ set_track_vars() {
     T3|t3)
       TRACK="T3"
       TASK_NAME="stack_bowls_two"
-      TASK_CONFIG="stack_bowls_two_200ep"
+      TASK_CONFIG="stack_bowls_two_600ep"
       CLEAN_CONFIG="stack_bowls_two_clean"
-      EXPERT_DATA_NUM="200"
+      EXPERT_DATA_NUM="600"
       ;;
     T4|t4)
       TRACK="T4"

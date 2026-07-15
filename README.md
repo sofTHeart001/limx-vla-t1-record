@@ -22,24 +22,31 @@ Built on RoboTwin bimanual simulation, this project covers expert trajectory col
 当前已经完成：
 
 - T1 `adjust_bottle`：数据采集、ACT 训练、本地评估、策略部署演示和官方提交。
-- T2 `grab_roller`：400 条成功轨迹采集、ACT baseline 训练和成功示例展示。
-- InterACT：在 ACT baseline 旁新增独立算法目录，用于后续 T3/T4 双臂长序列任务验证。
+- T2 `grab_roller`：400 条成功轨迹采集、ACT + 轻量视觉增强训练、本地公开 seed 评估和最新权重提交。
+- T3 `stack_bowls_two`：600 条成功轨迹采集、ACT 训练和公开 seed 全量评估。
+- InterACT：在 ACT baseline 旁新增独立算法目录，用于后续 T4 双臂长序列任务验证。
 
 ## 视频展示
 
 <table>
   <tr>
-    <td width="50%" align="center">
+    <td width="33%" align="center">
       <h3>T1：ACT 策略闭环执行</h3>
-      <img src="media/t1_policy_rollout_success_seed_20260631.gif" width="360" alt="T1 policy rollout success" />
+      <img src="media/t1_policy_rollout_success_seed_20260631.gif" width="300" alt="T1 policy rollout success" />
       <br />
       <a href="media/t1_policy_rollout_success_seed_20260631.mp4">查看原始 MP4</a>
     </td>
-    <td width="50%" align="center">
+    <td width="33%" align="center">
       <h3>T2：双臂抓举滚筒成功示例</h3>
-      <img src="media/t2_collect_success_grab_roller_episode1.gif" width="360" alt="T2 collect success" />
+      <img src="media/t2_collect_success_grab_roller_episode1.gif" width="300" alt="T2 collect success" />
       <br />
       <a href="media/t2_collect_success_grab_roller_episode1.mp4">查看原始 MP4</a>
+    </td>
+    <td width="33%" align="center">
+      <h3>T3：双臂叠两碗采集示例</h3>
+      <img src="media/t3_collect_success_stack_bowls_two_episode199.gif" width="300" alt="T3 stack bowls collect success" />
+      <br />
+      <a href="media/t3_collect_success_stack_bowls_two_episode199.mp4">查看原始 MP4</a>
     </td>
   </tr>
 </table>
@@ -49,8 +56,8 @@ Built on RoboTwin bimanual simulation, this project covers expert trajectory col
 | 阶段 | 任务 | 当前状态 |
 |---|---|---|
 | T1 | `adjust_bottle` | 已完成数据采集、ACT 训练、本地评估、策略部署演示和官方提交 |
-| T2 | `grab_roller` | 已完成 400 条成功轨迹采集、ACT baseline 训练和成功示例展示 |
-| T3 | `stack_bowls_two` | 准备中 |
+| T2 | `grab_roller` | 400 条轨迹，增强训练版 ACT 本地公开 seed `64%`，最新权重已提交官方队列 |
+| T3 | `stack_bowls_two` | 600 条轨迹，ACT 本地公开 seed `72%` |
 | T4 | `stack_bowls_three` | 准备中，后续作为综合任务重点验证 |
 
 ## 项目亮点
@@ -58,7 +65,7 @@ Built on RoboTwin bimanual simulation, this project covers expert trajectory col
 | 方向 | 内容 |
 |---|---|
 | 完整流程 | 打通 RoboTwin 任务配置、专家轨迹采集、ACT 数据处理、训练、评估和展示 |
-| 双臂任务 | 从 T1 单任务流程推进到 T2 双臂协同抓举任务 |
+| 双臂任务 | 从 T1 单任务流程推进到 T2 抓举滚筒和 T3 双碗堆叠 |
 | 算法扩展 | 新增 `policies/inter-act/`，保留 ACT baseline，同时准备 InterACT 风格结构 |
 | 工程整理 | 训练产物、checkpoint、HDF5 数据和 token 不入库，GitHub 保留可展示代码和记录 |
 | 可复现性 | 提供从环境安装到训练评估的 [复现指南](docs/reproduce.md) |
@@ -200,13 +207,27 @@ make train TRACK=T2 SEED=0 GPU=0
 make eval-local TRACK=T2
 ```
 
+T3 使用：
+
+```bash
+make collect TRACK=T3 GPU=0
+make process TRACK=T3
+make train TRACK=T3 SEED=0 GPU=0
+python starter/eval_local.py --track T3 \
+  --ckpt-dir external/robotwin_local/policy/ACT/act_ckpt/act-stack_bowls_two/stack_bowls_two_600ep-600 \
+  --deploy-config policy/ACT/deploy_t3.yml
+```
+
 ## 仓库结构
 
 ```text
 records/
   t1_record.md             # T1 阶段记录
   t2_record.md             # T2 阶段记录
+  t3_record.md             # T3 阶段记录
   t1_public_eval.json      # T1 本地评估结果归档
+  t2_public_eval.json      # T2 最新本地评估结果归档
+  t3_public_eval.json      # T3 本地评估结果归档
 media/
   t1_policy_rollout_success_seed_20260631.gif
   t1_policy_rollout_success_seed_20260631.mp4
@@ -214,6 +235,8 @@ media/
   t1_collect_demo_episode43.mp4
   t2_collect_success_grab_roller_episode1.gif
   t2_collect_success_grab_roller_episode1.mp4
+  t3_collect_success_stack_bowls_two_episode199.gif
+  t3_collect_success_stack_bowls_two_episode199.mp4
 policies/
   inter-act/               # 独立 InterACT 风格算法改造
 docs/
@@ -240,7 +263,7 @@ submit/                    # 官方提交脚本
 
 ## 后续计划
 
-- 补充 T2 policy rollout 视频。
-- 推进 T3/T4 长序列双臂协同任务。
+- 补充 T2/T3 policy rollout 视频。
+- 推进 T4 长序列双臂协同任务。
 - 对比 ACT、ACT + 数据增强、InterACT 三组策略。
 - 继续整理可展示的视频、训练记录和阶段成果。

@@ -1,0 +1,11 @@
+{
+  "sr": 0.72,
+  "n_repeats": 1,
+  "n_episodes": 100,
+  "per_repeat": [
+    0.72
+  ],
+  "track": "T3",
+  "checkpoint_note": "ACT seed 0, best validation checkpoint at epoch 3286",
+  "local_eval_date": "2026-07-15"
+}

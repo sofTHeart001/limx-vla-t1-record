@@ -1,6 +1,6 @@
 # 复现指南
 
-这份文档用于从一个干净环境复现本项目的 T1/T2 流程，并说明公开仓库缺少哪些本地模块。公开仓库主要用于项目展示和代码记录，不包含大体积仿真环境、采集数据和训练权重。
+这份文档用于从一个干净环境复现本项目的 T1/T2/T3 流程，并说明公开仓库缺少哪些本地模块。公开仓库主要用于项目展示和代码记录，不包含大体积仿真环境、采集数据和训练权重。
 
 ## 0. 公开仓库缺少什么
 
@@ -31,7 +31,7 @@
 先做基础检查：
 
 ```bash
-cd troncamp-mani-robot-learning
+cd hd-act-bimanual-imitation-learning
 make check
 ```
 
@@ -116,19 +116,32 @@ adjust_bottle_200ep.yml
 grab_roller_400ep.yml
 ```
 
+本项目当前 T3 使用：
+
+```text
+stack_bowls_two_600ep.yml
+```
+
 如果官方包里没有 T2-T4 采集配置，可以先生成模板：
 
 ```bash
 make configs
 ```
 
-然后编辑：
+仓库中已经保留了 T2/T3 当前使用过的采集配置：
 
 ```text
-external/robotwin_local/task_config/grab_roller_400ep.yml
+configs/task_config_grab_roller_400ep.yml
+configs/task_config_stack_bowls_two_600ep.yml
 ```
 
-T2 当前使用过的关键设置：
+`make configs` 会优先把这些项目配置复制到：
+
+```text
+external/robotwin_local/task_config/
+```
+
+T2 关键设置：
 
 ```yaml
 episode_num: 400
@@ -139,6 +152,27 @@ domain_randomization:
   random_table_height: 0
   random_light: true
   crazy_random_light_rate: 0.05
+camera:
+  collect_head_camera: true
+  collect_wrist_camera: true
+data_type:
+  rgb: true
+  depth: false
+  pointcloud: false
+  qpos: true
+```
+
+T3 关键设置：
+
+```yaml
+episode_num: 600
+domain_randomization:
+  random_background: false
+  cluttered_table: false
+  random_head_camera_dis: 0.015
+  random_table_height: 0.003
+  random_light: true
+  crazy_random_light_rate: 0.08
 camera:
   collect_head_camera: true
   collect_wrist_camera: true
@@ -163,6 +197,12 @@ T2：
 make collect TRACK=T2 GPU=0
 ```
 
+T3：
+
+```bash
+make collect TRACK=T3 GPU=0
+```
+
 采集结果会写到：
 
 ```text
@@ -173,6 +213,12 @@ external/robotwin_local/data/<task>/<task_config>/
 
 ```text
 external/robotwin_local/data/grab_roller/grab_roller_400ep/
+```
+
+T3 对应：
+
+```text
+external/robotwin_local/data/stack_bowls_two/stack_bowls_two_600ep/
 ```
 
 该目录里通常包含：
@@ -200,6 +246,12 @@ T2：
 make process TRACK=T2
 ```
 
+T3：
+
+```bash
+make process TRACK=T3
+```
+
 输出位置：
 
 ```text
@@ -210,6 +262,12 @@ T2 对应：
 
 ```text
 external/robotwin_local/policy/ACT/processed_data/sim-grab_roller/grab_roller_400ep-400/
+```
+
+T3 对应：
+
+```text
+external/robotwin_local/policy/ACT/processed_data/sim-stack_bowls_two/stack_bowls_two_600ep-600/
 ```
 
 处理后会同时更新：
@@ -232,6 +290,12 @@ T2：
 make train TRACK=T2 SEED=0 GPU=0
 ```
 
+T3：
+
+```bash
+make train TRACK=T3 SEED=0 GPU=0
+```
+
 checkpoint 输出位置：
 
 ```text
@@ -242,6 +306,12 @@ T2 对应：
 
 ```text
 external/robotwin_local/policy/ACT/act_ckpt/act-grab_roller/grab_roller_400ep-400/
+```
+
+T3 对应：
+
+```text
+external/robotwin_local/policy/ACT/act_ckpt/act-stack_bowls_two/stack_bowls_two_600ep-600/
 ```
 
 训练完成后至少应有：
@@ -282,13 +352,52 @@ ACT_AUG=1 CUDA_VISIBLE_DEVICES=0 python3 imitate_episodes.py \
 
 注意：增强只应该用于训练，不用于评估或提交。
 
-## 10. 本地评估
+## 10. T3 训练配置
+
+T3 用的是更长动作 chunk 和更多轨迹。`scripts/30_train_one.sh` 已为 `TRACK=T3` 设置默认超参：
+
+```text
+ACT_BATCH_SIZE=24
+ACT_CHUNK_SIZE=100
+ACT_LR=2e-5
+ACT_LR_BACKBONE=3e-6
+ACT_WEIGHT_DECAY=1e-4
+ACT_WARMUP_STEPS=500
+ACT_GRAD_CLIP=0.1
+ACT_VAL_RATIO=0.1
+ACT_KL_WEIGHT=10
+ACT_NUM_EPOCHS=4000
+ACT_SAVE_FREQ=1000
+ACT_AUG=1
+```
+
+本次 T3 训练结果：
+
+```text
+Best val loss: 0.017439 @ epoch 3286
+Local public eval: 72% on 100 public seeds
+```
+
+T3 的 checkpoint 结构依赖 `chunk_size=100`，评估时需要匹配部署配置。仓库里保留了：
+
+```text
+configs/deploy_t3.yml
+```
+
+`make eval-local TRACK=T3` 会自动把它复制到：
+
+```text
+external/robotwin_local/policy/ACT/deploy_t3.yml
+```
+
+## 11. 本地评估
 
 本地公开 100 seed 评估：
 
 ```bash
 make eval-local TRACK=T1
 make eval-local TRACK=T2
+make eval-local TRACK=T3
 ```
 
 如果要评估指定 checkpoint 目录：
@@ -297,6 +406,15 @@ make eval-local TRACK=T2
 python starter/eval_local.py \
   --track T2 \
   --ckpt-dir external/robotwin_local/policy/ACT/act_ckpt/act-grab_roller/grab_roller_400ep-400
+```
+
+T3 指定 checkpoint 目录评估：
+
+```bash
+python starter/eval_local.py \
+  --track T3 \
+  --ckpt-dir external/robotwin_local/policy/ACT/act_ckpt/act-stack_bowls_two/stack_bowls_two_600ep-600 \
+  --deploy-config policy/ACT/deploy_t3.yml
 ```
 
 评估目录必须包含：
@@ -308,7 +426,7 @@ dataset_stats.pkl
 
 提交脚本会自动把你指定的 `policy_best.ckpt` 打包成评测端读取的 `policy_last.ckpt`。
 
-## 11. 录制展示视频
+## 12. 录制展示视频
 
 录制 policy rollout：
 
@@ -339,7 +457,7 @@ media/
 ffmpeg -y -i input.mp4 -vf "fps=12,scale=320:-1:flags=lanczos" output.gif
 ```
 
-## 12. 使用 InterACT
+## 13. 使用 InterACT
 
 公开仓库里的 InterACT 代码在：
 
@@ -385,7 +503,7 @@ InterACT 输出目录：
 external/robotwin_local/policy/inter-act/inter_act_ckpt/
 ```
 
-## 13. 提交
+## 14. 提交
 
 准备 token：
 
@@ -411,9 +529,11 @@ make submit TRACK=T1
 make submit TRACK=T2
 ```
 
+提交 T3 前要确认官方赛道已经解锁，并确认代码包内的推理配置与 checkpoint 结构一致。当前 T3 checkpoint 使用 `chunk_size=100`，本地评估使用 `configs/deploy_t3.yml`。
+
 T2/T3/T4 提交时脚本会附带 `external/robotwin_local` 代码包。
 
-## 14. 常见问题
+## 15. 常见问题
 
 ### `nvidia-smi` 不可用
 

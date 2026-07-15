@@ -8,9 +8,11 @@
 - 任务：`grab_roller`
 - 策略：ACT baseline，后续准备对比 InterACT
 - 本地演示数据：400 episodes
-- 训练 seed：0
-- 训练配置：`chunk_size=50`、`hidden_dim=512`、`kl_weight=10`、`lr=1e-5`
-- 最佳验证损失：0.029596，出现在 epoch 2457
+- baseline 训练 seed：0
+- 增强训练 seed：1
+- 训练配置：`chunk_size=50`、`hidden_dim=512`、`dim_feedforward=3200`、`kl_weight=10`、`lr=1e-5`
+- baseline 最佳验证损失：0.029596，出现在 epoch 2457
+- 增强训练最佳验证损失：0.029514，出现在 epoch 2514
 
 ## Baseline 本地公开 seed 评估
 
@@ -26,7 +28,23 @@
 }
 ```
 
-结论：400 条轨迹训练出的 ACT baseline 已经具备完成 T2 双臂抓举任务的能力，后续继续通过数据增强、checkpoint 筛选和更多轨迹提升稳定性。
+## 最新 checkpoint 本地公开 seed 评估
+
+最新选择的是增强训练目录下的 `policy_last.ckpt`。在公开 100 seed 上，本地评估结果为：
+
+```json
+{
+  "sr": 0.64,
+  "n_repeats": 1,
+  "n_episodes": 100,
+  "per_repeat": [0.64],
+  "track": "T2"
+}
+```
+
+该 checkpoint 已在 2026-07-15 作为 T2 最新版本提交官方队列，提交编号 `#380`。公开仓库只记录结果和复现方式，不提交 `.ckpt` 权重文件。
+
+结论：400 条轨迹训练出的 ACT 已经具备完成 T2 双臂抓举任务的能力。轻量视觉增强和 checkpoint 筛选对公开 seed 稳定性有明显帮助。
 
 ## T2 成功采集示例
 
