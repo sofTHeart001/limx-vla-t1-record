@@ -6,7 +6,7 @@
     0.64
   ],
   "track": "T2",
-  "checkpoint_note": "ACT augmentation run, seed 1, policy_last.ckpt",
+  "checkpoint_note": "InterACT-compatible augmentation run, seed 1, policy_last.ckpt",
   "local_eval_date": "2026-07-13",
   "submission_note": "Latest T2 checkpoint submitted to official queue as submission #380 on 2026-07-15.",
   "policy_rollout_demo": {

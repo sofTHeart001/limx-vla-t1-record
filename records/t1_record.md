@@ -1,12 +1,12 @@
 # T1 阶段记录：adjust_bottle
 
-这是 TronCamp Mani T1-T4 综合项目中的第一阶段记录，任务是 T1 `adjust_bottle`。该阶段目标是先打通数据采集、ACT 训练、本地评估、策略部署演示和官方提交流程，为后续 T2-T4 任务迁移做基线。
+这是 TronCamp Mani T1-T4 综合项目中的第一阶段记录，任务是 T1 `adjust_bottle`。该阶段目标是先打通数据采集、InterACT-compatible 训练、本地评估、策略部署演示和官方提交流程，为后续 T2-T4 任务迁移做基线。
 
 ## 任务信息
 
 - 赛道：T1
 - 任务：`adjust_bottle`
-- 策略：ACT
+- 策略：InterACT-compatible policy
 - 本地演示数据：200 episodes
 - 训练 seed：0
 - 最佳验证损失：0.028757，出现在 epoch 5125
@@ -37,7 +37,7 @@
 - GIF：[`media/t1_policy_rollout_success_seed_20260631.gif`](../media/t1_policy_rollout_success_seed_20260631.gif)
 - MP4：[`media/t1_policy_rollout_success_seed_20260631.mp4`](../media/t1_policy_rollout_success_seed_20260631.mp4)
 
-该视频是加载训练后的 ACT checkpoint 后由策略闭环执行得到，不是专家采集视频。
+该视频是加载训练后的 InterACT-compatible checkpoint 后由策略闭环执行得到，不是专家采集视频。
 
 ## 官方提交
 
@@ -59,7 +59,7 @@
 以下内容没有放入 GitHub：
 
 - 采集到的 `.hdf5` 演示数据
-- ACT processed data
+- InterACT-compatible processed data
 - `.ckpt` checkpoint
 - 本地日志
 - 官方提交 token 或其他凭据

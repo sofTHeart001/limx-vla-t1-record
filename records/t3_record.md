@@ -6,7 +6,7 @@
 
 - 赛道：T3
 - 任务：`stack_bowls_two`
-- 策略：ACT baseline
+- 策略：InterACT-compatible policy
 - 本地演示数据：600 episodes
 - 训练 seed：0
 - 训练配置：`chunk_size=100`、`hidden_dim=512`、`dim_feedforward=3200`、`kl_weight=10`
@@ -49,7 +49,7 @@ external/robotwin_local/policy/ACT/deploy_t3.yml
 
 ## T3 Policy 自主执行示例
 
-下面是训练出的 ACT policy 在 T3 `stack_bowls_two` 上的闭环执行样例。该视频不是专家采集轨迹，而是 checkpoint 在 clean eval 配置下自主 rollout，公开 seed 为 `20260629`，最终成功，耗时 `668` steps。
+下面是训练出的 InterACT-compatible policy 在 T3 `stack_bowls_two` 上的闭环执行样例。该视频不是专家采集轨迹，而是 checkpoint 在 clean eval 配置下自主 rollout，公开 seed 为 `20260629`，最终成功，耗时 `668` steps。
 
 ![T3 policy rollout success](../media/t3_policy_rollout_success_seed_20260629.gif)
 
@@ -57,6 +57,6 @@ external/robotwin_local/policy/ACT/deploy_t3.yml
 
 ## 复盘
 
-T3 的主要变化是把轨迹数量扩展到 600 条，并把 ACT 的 `chunk_size` 提升到 100，以适配更长的连续操作。训练中保留轻量视觉增强，用于提升对光照和背景扰动的鲁棒性；评估端保持确定性配置，避免引入额外随机性。
+T3 的主要变化是把轨迹数量扩展到 600 条，并把 action chunk 的 `chunk_size` 提升到 100，以适配更长的连续操作。训练中保留轻量视觉增强，用于提升对光照和背景扰动的鲁棒性；评估端保持确定性配置，避免引入额外随机性。
 
 公开仓库不包含 T3 的 HDF5 数据、processed data、checkpoint 和本地完整日志，只保留可复现配置、评估结果和视频记录。

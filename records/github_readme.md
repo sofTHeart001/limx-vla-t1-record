@@ -6,13 +6,12 @@
 
 - 综合目标：TronCamp Mani T1-T4
 - 当前完成：T1 `adjust_bottle`、T2 `grab_roller`、T3 `stack_bowls_two`、T4 `stack_bowls_three`
-- 方法：ACT imitation learning
+- 方法：InterACT-style imitation learning
 - 本地公开 seed 评估与阶段记录：详见 `records/t1_record.md`、`records/t2_record.md`、`records/t3_record.md`、`records/t4_record.md`
 - 官方提交队列编号：T1 `#70`，T2 `#380`，T4 `#695`
 - 策略部署视频：`media/t1_policy_rollout_success_seed_20260631.gif`
 - T2 策略部署视频：`media/t2_policy_rollout_success_seed_20260630.gif`
 - T3 策略部署视频：`media/t3_policy_rollout_success_seed_20260629.gif`
 - T4 策略部署视频：`media/t4_policy_rollout_seed_20260629.gif`
-- 完整演示视频：`media/troncamp_mani_final_demo_iaKZ-w.mp4`
 
 该仓库不包含训练数据、checkpoint、processed data、日志和 token。

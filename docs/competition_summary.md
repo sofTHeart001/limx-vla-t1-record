@@ -3,7 +3,7 @@
 ## 总流程
 
 1. 根目录创建并激活 `troncamp_env`，Python 3.10。
-2. 安装 RoboTwin、ACT 训练栈、cuRobo 0.8.0。
+2. 安装 RoboTwin、InterACT-compatible 训练栈、cuRobo 0.8.0。
 3. 在根目录还原 `__KIT_ROOT__` 到当前绝对路径。
 4. 根目录执行 `collect_data.sh` 采集成功轨迹。
 5. 在 `external/robotwin_local/policy/ACT` 下执行数据处理、训练和 `eval.sh`。
@@ -12,7 +12,7 @@
 ## 关键路径
 
 - 官方包根目录：`external/robotwin_local`
-- ACT 目录：`external/robotwin_local/policy/ACT`
+- 官方策略目录：`external/robotwin_local/policy/ACT`
 - 采集配置：`external/robotwin_local/task_config/<task_config>.yml`
 - 处理后数据：`external/robotwin_local/policy/ACT/processed_data/`
 - 训练权重：`external/robotwin_local/policy/ACT/act_ckpt/act-<task>/<config>-<num>/`

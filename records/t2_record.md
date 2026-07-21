@@ -1,12 +1,12 @@
 # T2 阶段记录：grab_roller
 
-这是 TronCamp Mani T1-T4 综合项目中的第二阶段记录，任务是 T2 `grab_roller`。该阶段开始从单臂任务进入双臂协同操作，重点验证 ACT 在更长动作序列、双腕相机和轻量随机化数据上的泛化能力。
+这是 TronCamp Mani T1-T4 综合项目中的第二阶段记录，任务是 T2 `grab_roller`。该阶段开始从单臂任务进入双臂协同操作，重点验证 InterACT-style 策略在更长动作序列、双腕相机和轻量随机化数据上的泛化能力。
 
 ## 任务信息
 
 - 赛道：T2
 - 任务：`grab_roller`
-- 策略：ACT baseline，后续准备对比 InterACT
+- 策略：InterACT-compatible policy，后续继续验证 InterACT 主干
 - 最终本地演示数据：600 episodes
 - 训练 seed：0
 - 最终训练配置：`chunk_size=100`、`hidden_dim=512`、`dim_feedforward=3200`、`kl_weight=10`
@@ -51,7 +51,7 @@
 
 ## T2 Policy 自主执行示例
 
-下面是增强训练后的 ACT checkpoint 在 T2 `grab_roller` 上的闭环执行结果，使用公开 seed `20260630`，99 步完成任务。
+下面是增强训练后的 InterACT-compatible checkpoint 在 T2 `grab_roller` 上的闭环执行结果，使用公开 seed `20260630`，99 步完成任务。
 
 ![T2 policy rollout success](../media/t2_policy_rollout_success_seed_20260630.gif)
 
@@ -74,7 +74,7 @@
 以下内容没有放入 GitHub：
 
 - 采集到的 `.hdf5` 演示数据
-- ACT processed data
+- InterACT-compatible processed data
 - `.ckpt` checkpoint
 - 本地训练和评估日志
 - 官方提交 token 或其他凭据

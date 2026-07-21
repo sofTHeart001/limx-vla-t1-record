@@ -6,7 +6,7 @@
     0.72
   ],
   "track": "T3",
-  "checkpoint_note": "ACT seed 0, best validation checkpoint at epoch 3286",
+  "checkpoint_note": "InterACT-compatible seed 0, best validation checkpoint at epoch 3286",
   "local_eval_date": "2026-07-15",
   "policy_rollout_demo": {
     "seed": 20260629,
