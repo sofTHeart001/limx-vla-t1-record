@@ -4,14 +4,14 @@
 
 ### A TronCamp Mani T1-T4 Bimanual Manipulation Project
 
-Built on RoboTwin bimanual simulation, this project covers expert trajectory collection, InterACT-style policy training, local evaluation, visual rollout demos, and hierarchical decoupled modeling for bimanual coordination.
+Built on RoboTwin bimanual simulation, this project covers expert trajectory collection, ACT official-submission training, local evaluation, visual rollout demos, and an InterACT-style research branch for hierarchical bimanual coordination.
 
 ![Python](https://img.shields.io/badge/Python-3.10-3776AB?logo=python&logoColor=white)
-![PyTorch](https://img.shields.io/badge/PyTorch-InterACT-EE4C2C?logo=pytorch&logoColor=white)
+![PyTorch](https://img.shields.io/badge/PyTorch-ACT%20%2F%20InterACT-EE4C2C?logo=pytorch&logoColor=white)
 ![RoboTwin](https://img.shields.io/badge/Simulation-RoboTwin-2F855A)
 ![CUDA](https://img.shields.io/badge/GPU-CUDA-76B900?logo=nvidia&logoColor=white)
 
-[视频展示](#视频展示) · [InterACT 算法](#interact-算法) · [复现指南](docs/reproduce.md) · [详细记录](records)
+[视频展示](#视频展示) · [官方 ACT 提交复现](#官方-act-提交复现) · [InterACT 算法](#interact-算法) · [复现指南](docs/reproduce.md) · [详细记录](records)
 
 </div>
 
@@ -21,36 +21,38 @@ Built on RoboTwin bimanual simulation, this project covers expert trajectory col
 
 当前已经完成：
 
-- T1 `adjust_bottle`：数据采集、InterACT 兼容训练、本地评估、策略部署演示和官方提交。
-- T2 `grab_roller`：600 条成功轨迹采集、InterACT 兼容视觉增强训练、本地公开 seed 评估和官方提交。
-- T3 `stack_bowls_two`：600 条成功轨迹采集、InterACT 兼容训练和公开 seed 全量评估。
-- T4 `stack_bowls_three`：600 条成功轨迹采集、InterACT 兼容快速训练、策略 rollout 演示和官方提交。
-- InterACT：新增独立算法目录，用于复杂双臂长序列任务的分层解耦策略验证。
+- T1 `adjust_bottle`：数据采集、ACT 训练、本地评估、策略部署演示和官方提交。
+- T2 `grab_roller`：600 条成功轨迹采集、ACT + 轻量视觉增强训练、本地公开 seed 评估和官方提交。
+- T3 `stack_bowls_two`：600 条成功轨迹采集、ACT 训练和公开 seed 全量评估。
+- T4 `stack_bowls_three`：600 条成功轨迹采集、ACT 快速训练、策略 rollout 演示和官方提交。
+- InterACT：新增独立算法目录，作为复杂双臂长序列任务的研究改进分支，不作为官方提交结果宣称。
 
 ## 视频展示
+
+以下视频作为 InterACT 复现实验的策略闭环展示，用于呈现分层双臂策略在 T1-T4 任务上的执行效果；线上排行榜提交结果见后文的官方 ACT 提交流程。
 
 <table>
   <tr>
     <td width="25%" align="center">
-      <h3>T1：InterACT 策略闭环执行</h3>
+      <h3>T1：InterACT 复现闭环执行</h3>
       <img src="media/t1_policy_rollout_success_seed_20260631.gif" width="300" alt="T1 policy rollout success" />
       <br />
       <a href="media/t1_policy_rollout_success_seed_20260631.mp4">查看原始 MP4</a>
     </td>
     <td width="25%" align="center">
-      <h3>T2：InterACT 策略抓举滚筒</h3>
+      <h3>T2：InterACT 复现抓举滚筒</h3>
       <img src="media/t2_policy_rollout_success_seed_20260630.gif" width="300" alt="T2 policy rollout success" />
       <br />
       <a href="media/t2_policy_rollout_success_seed_20260630.mp4">查看原始 MP4</a>
     </td>
     <td width="25%" align="center">
-      <h3>T3：InterACT 策略叠两碗</h3>
+      <h3>T3：InterACT 复现叠两碗</h3>
       <img src="media/t3_policy_rollout_success_seed_20260629.gif" width="300" alt="T3 policy rollout success" />
       <br />
       <a href="media/t3_policy_rollout_success_seed_20260629.mp4">查看原始 MP4</a>
     </td>
     <td width="25%" align="center">
-      <h3>T4：InterACT 策略叠三碗</h3>
+      <h3>T4：InterACT 复现叠三碗</h3>
       <img src="media/t4_policy_rollout_seed_20260629.gif" width="300" alt="T4 policy rollout" />
       <br />
       <a href="media/t4_policy_rollout_seed_20260629.mp4">查看原始 MP4</a>
@@ -62,30 +64,31 @@ Built on RoboTwin bimanual simulation, this project covers expert trajectory col
 
 | 阶段 | 任务 | 当前状态 |
 |---|---|---|
-| T1 | `adjust_bottle` | 已完成数据采集、InterACT 兼容训练、本地评估、策略部署演示和官方提交 |
-| T2 | `grab_roller` | 600 条轨迹，增强训练版 InterACT 兼容策略完成训练与官方提交 |
-| T3 | `stack_bowls_two` | 600 条轨迹，InterACT 兼容策略本地公开 seed `72%` |
-| T4 | `stack_bowls_three` | 600 条轨迹，InterACT 兼容快速训练完成，最佳验证损失 `0.036161 @ epoch 1100`，官方提交 `#695` |
+| T1 | `adjust_bottle` | 已完成数据采集、ACT 训练、本地评估、策略部署演示和官方提交 |
+| T2 | `grab_roller` | 600 条轨迹，增强训练版 ACT 完成训练与官方提交 |
+| T3 | `stack_bowls_two` | 600 条轨迹，ACT 本地公开 seed `72%` |
+| T4 | `stack_bowls_three` | 600 条轨迹，ACT 快速训练完成，最佳验证损失 `0.036161 @ epoch 1100`，官方提交 `#695` |
+| InterACT | `stack_bowls_three` | 独立实验分支，已接入同一批 processed data，用于和 ACT 结果做结构对照 |
 
 ## 项目亮点
 
 | 方向 | 内容 |
 |---|---|
-| 完整流程 | 打通 RoboTwin 任务配置、专家轨迹采集、InterACT 兼容数据处理、训练、评估和展示 |
+| 完整流程 | 打通 RoboTwin 任务配置、专家轨迹采集、ACT 数据处理、训练、评估和展示 |
 | 双臂任务 | 从 T1 单任务流程推进到 T2 抓举滚筒、T3 双碗堆叠和 T4 三碗堆叠 |
-| 算法扩展 | 新增 `policies/inter-act/`，围绕 InterACT 风格结构做双臂协同建模 |
+| 算法扩展 | 在官方 ACT 提交流程旁新增 `policies/inter-act/`，围绕 InterACT 风格结构做双臂协同建模 |
 | 工程整理 | 训练产物、checkpoint、HDF5 数据和 token 不入库，GitHub 保留可展示代码和记录 |
 | 可复现性 | 提供从环境安装到训练评估的 [复现指南](docs/reproduce.md) |
 
 ## InterACT 算法
 
-本项目的算法展示主线是 InterACT 风格的分层解耦策略。为了兼容 TronCamp 官方提交与复现环境，底层仍会出现 `policy/ACT` 这样的官方目录名，但公开叙事统一围绕 InterACT 分支展开：
+InterACT 是本项目的研究改进分支，目标是验证分层解耦结构是否更适合 T3/T4 这类长序列双臂任务。官方线上提交仍使用 ACT checkpoint 和官方 ACT 推理接口，InterACT 不作为官方提交成绩宣称。
 
 ```text
 policies/inter-act/
 ```
 
-InterACT 分支复用官方 HDF5 数据格式、三相机 RGB 输入和 16 维双臂动作接口，但把“左臂、右臂、图像”拆成结构化 segment，并显式建模双臂同步。
+InterACT 分支复用官方 ACT 的 HDF5 数据格式、三相机 RGB 输入和 16 维双臂动作接口，但把“左臂、右臂、图像”拆成结构化 segment，并显式建模双臂同步。
 
 ### 架构摘要
 
@@ -112,7 +115,7 @@ flowchart TD
     RH --> OUT
 ```
 
-输入输出保持和官方数据接口对齐：
+输入输出保持和 ACT 数据接口对齐：
 
 ```text
 qpos:        [B, 16]
@@ -140,16 +143,16 @@ right arm + right gripper: action[8:16]
 
 ### 核心差异
 
-| 对比项 | 官方兼容接口 | InterACT 分支 |
+| 对比项 | ACT 官方提交流程 | InterACT 研究分支 |
 |---|---|---|
 | 数据接口 | HDF5 + 三相机 RGB + qpos | 保持一致 |
 | 动作维度 | 16 维整体建模 | 拆成 left/right 两个 8 维分支 |
-| 主干结构 | 标准 action chunking 接口 | HAE + Multi-Arm Decoder |
+| 主干结构 | ACT CVAE Transformer | HAE + Multi-Arm Decoder |
 | 双臂协同 | 由 Transformer 隐式学习 | 通过 segment 和 sync attention 显式建模 |
 | loss | L1 + KL | masked L1 |
 | checkpoint | `act_ckpt/` | `inter_act_ckpt/` |
 
-当前 InterACT 第一版先保持 RGB 输入，不加入点云、SAC/PPO residual 或额外 RL 后训练，目的是先验证结构本身是否能适配现有官方数据集和训练框架。
+当前 InterACT 第一版先保持 RGB 输入，不加入点云、SAC/PPO residual 或额外 RL 后训练，目的是先验证结构本身是否能适配现有 ACT 数据集和训练框架。
 
 详细说明见 [docs/interact_design.md](docs/interact_design.md)。
 
@@ -162,7 +165,7 @@ RoboTwin T1-T4 双臂操作任务
 任务配置与专家轨迹采集
         |
         v
-InterACT 兼容数据预处理
+ACT 数据预处理
         |
         v
 策略训练与 checkpoint 选择
@@ -177,8 +180,8 @@ InterACT 兼容数据预处理
 主要技术栈：
 
 - Python / PyTorch
-- InterACT-style hierarchical attention
 - Action chunking imitation learning
+- InterACT-style hierarchical attention
 - RoboTwin 双臂机器人仿真
 - CUDA 单卡训练与评估
 - GitHub 项目记录与视频展示
@@ -186,6 +189,47 @@ InterACT 兼容数据预处理
 ## 如何复现
 
 完整复现步骤见 [docs/reproduce.md](docs/reproduce.md)。
+
+## 官方 ACT 提交复现
+
+线上排行榜成绩使用 ACT 提交流程复现。InterACT 代码用于研究对照，不参与官方提交包。
+
+1. 准备官方 RoboTwin 运行环境：
+
+```text
+external/robotwin_local/
+```
+
+2. 安装环境：
+
+```bash
+make check
+make env
+make install
+```
+
+3. 采集、处理、训练指定赛道：
+
+```bash
+make collect TRACK=T4 GPU=0
+PROCESS_RESUME=1 PROCESS_DELETE_SOURCE=1 make process TRACK=T4
+make train TRACK=T4 SEED=0 GPU=0
+```
+
+4. 本地评估：
+
+```bash
+make eval-local TRACK=T4
+```
+
+5. 提交官方测评：
+
+```bash
+export TRONCAMP_TOKEN_FILE=/path/to/token.txt
+make submit TRACK=T4
+```
+
+注意：提交时 checkpoint 结构必须和 `policy/ACT/deploy_policy.yml` 或对应 deploy config 完全一致，尤其是 `hidden_dim`、`chunk_size`、`dim_feedforward`、相机顺序和 `policy_class`。
 
 公开仓库不包含本地完整 RoboTwin 运行环境、采集数据和 checkpoint。复现前需要把官方 starter package 中的 `robotwin_local` 放到：
 
@@ -261,7 +305,7 @@ docs/
   reproduce.md             # 从环境安装到训练评估的复现步骤
 recipes/
   eval/                    # 本地评估相关脚本
-  train/                   # InterACT 兼容训练相关脚本
+  train/                   # ACT 训练相关脚本
 scripts/                   # 一键采集、处理、训练、评估、提交入口
 starter/                   # 本地评估和可视化入口
 submit/                    # 官方提交脚本
@@ -272,7 +316,7 @@ submit/                    # 官方提交脚本
 公开仓库不包含：
 
 - 采集得到的 `.hdf5` 演示数据
-- InterACT 兼容 processed data
+- ACT processed data
 - `.ckpt` checkpoint
 - 本地训练/评估日志
 - 官方提交 token 或其他凭据
@@ -281,6 +325,6 @@ submit/                    # 官方提交脚本
 ## 后续计划
 
 - 继续整理 T1-T4 训练曲线、提交结果和失败案例复盘。
-- 在更长序列任务上对比 InterACT、视觉增强和不同 action chunking 设置。
+- 在更长序列任务上对比 ACT、ACT + 数据增强、InterACT 三组策略。
 - 验证更强视觉编码器、temporal aggregation 和更稳定的 checkpoint 选择策略。
 - 将当前脚本沉淀为更干净的一键实验入口。

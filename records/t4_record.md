@@ -6,7 +6,7 @@
 
 - 赛道：T4
 - 任务：`stack_bowls_three`
-- 策略：InterACT-compatible policy
+- 策略：ACT baseline
 - 本地演示数据：600 episodes
 - 训练 seed：0
 - 训练配置：`chunk_size=100`、`hidden_dim=512`、`dim_feedforward=3200`、`kl_weight=10`
@@ -40,7 +40,7 @@ PROCESS_RESUME=1 PROCESS_DELETE_SOURCE=1 make process TRACK=T4
 
 ## T4 Policy 自主执行示例
 
-下面是训练出的 InterACT-compatible policy 在 T4 `stack_bowls_three` 上的闭环 rollout 片段。该视频不是专家采集轨迹，而是 checkpoint 在 clean eval 配置下自主执行，公开 seed 为 `20260629`。
+下面是 InterACT 复现实验在 T4 `stack_bowls_three` 上的闭环 rollout 片段。该视频不是专家采集轨迹，而是 policy 在 clean eval 配置下自主执行，公开 seed 为 `20260629`。官方提交成绩仍按 ACT checkpoint 和官方推理接口复现。
 
 ![T4 policy rollout](../media/t4_policy_rollout_seed_20260629.gif)
 
@@ -48,6 +48,6 @@ PROCESS_RESUME=1 PROCESS_DELETE_SOURCE=1 make process TRACK=T4
 
 ## 复盘
 
-T4 的主要目标是在截止前完成完整闭环：采集 600 条轨迹、压缩处理数据、完成 InterACT-compatible 训练、生成策略 rollout 并提交官方评测。最终保持官方推理接口兼容，避免线上加载 checkpoint 时出现结构不匹配。
+T4 的主要目标是在截止前完成完整闭环：采集 600 条轨迹、压缩处理数据、完成 ACT 训练、生成策略 rollout 并提交官方评测。最终保持官方 ACT 推理接口兼容，避免线上加载 checkpoint 时出现结构不匹配。
 
 T4 使用更高学习率和较少 epoch 来换取截止时间内的完整产出，同时保留 `chunk_size=100` 和轻量数据增强来适配长序列动作。公开仓库不包含 T4 的 HDF5 数据、processed data、checkpoint 和本地完整日志，只保留配置、脚本、视频和阶段记录。

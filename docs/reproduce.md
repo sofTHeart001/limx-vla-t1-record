@@ -2,15 +2,17 @@
 
 这份文档用于从一个干净环境复现本项目的 T1-T4 流程，并说明公开仓库缺少哪些本地模块。公开仓库主要用于项目展示和代码记录，不包含大体积仿真环境、采集数据和训练权重。
 
+官方线上提交使用 ACT checkpoint 和官方 ACT 推理接口复现；InterACT 是本项目的独立研究改进分支，用于后续对比，不作为官方提交成绩宣称。
+
 ## 0. 公开仓库缺少什么
 
 克隆本仓库后，以下内容需要你在本地准备：
 
 | 模块 | 是否在 GitHub | 本地路径 | 说明 |
 |---|---:|---|---|
-| RoboTwin / TronCamp 官方运行环境 | 否 | `external/robotwin_local/` | 仿真环境、任务、官方 action-chunking 训练栈、cuRobo、资产文件 |
+| RoboTwin / TronCamp 官方运行环境 | 否 | `external/robotwin_local/` | 仿真环境、任务、ACT 训练栈、cuRobo、资产文件 |
 | 采集得到的 HDF5 数据 | 否 | `external/robotwin_local/data/` | 需要自己通过专家脚本采集 |
-| InterACT-compatible processed data | 否 | `external/robotwin_local/policy/ACT/processed_data/` | 由 `make process` 生成 |
+| ACT processed data | 否 | `external/robotwin_local/policy/ACT/processed_data/` | 由 `make process` 生成 |
 | checkpoint | 否 | `external/robotwin_local/policy/ACT/act_ckpt/` | 由 `make train` 生成 |
 | 提交 token | 否 | 环境变量或 token 文件 | 不要写入 GitHub |
 
@@ -79,7 +81,7 @@ python -m pip install "setuptools<81"
 
 后续所有采集、处理、训练、评估命令都在这个环境中执行。
 
-## 4. 安装 RoboTwin / InterACT-compatible / cuRobo 依赖
+## 4. 安装 RoboTwin / ACT / cuRobo 依赖
 
 ```bash
 make install
@@ -89,7 +91,7 @@ make install
 
 1. 激活 `troncamp_env`
 2. 安装 RoboTwin 自带依赖
-3. 安装 `setup/requirements.txt` 里的 InterACT-compatible 训练依赖
+3. 安装 `setup/requirements.txt` 里的 ACT 训练依赖
 4. 以 editable 方式安装 `external/robotwin_local/envs/curobo`
 5. 还原 `__KIT_ROOT__` 路径占位符
 6. 运行 `setup/env_check.py`
@@ -272,7 +274,7 @@ scene_info.json
 
 如果中途断掉，采集脚本会读取已有 `seed.txt` 和 `data/episode*.hdf5`，一般可以继续跑。
 
-## 7. 处理成 InterACT-compatible 数据格式
+## 7. 处理成 ACT 数据格式
 
 T1：
 
@@ -298,7 +300,7 @@ T4：
 PROCESS_RESUME=1 PROCESS_DELETE_SOURCE=1 make process TRACK=T4
 ```
 
-T4 数据量较大，建议处理时开启 `PROCESS_DELETE_SOURCE=1`，边生成 InterACT-compatible processed data 边删除 raw HDF5，降低磁盘峰值占用。
+T4 数据量较大，建议处理时开启 `PROCESS_DELETE_SOURCE=1`，边生成 ACT processed data 边删除 raw HDF5，降低磁盘峰值占用。
 
 输出位置：
 
@@ -330,7 +332,7 @@ external/robotwin_local/policy/ACT/processed_data/sim-stack_bowls_three/stack_bo
 external/robotwin_local/policy/ACT/SIM_TASK_CONFIGS.json
 ```
 
-## 8. 训练 InterACT-compatible policy
+## 8. 训练 ACT baseline
 
 T1：
 
@@ -390,7 +392,7 @@ dataset_stats.pkl
 
 ## 9. T2-T4 视觉增强训练
 
-当前 T2-T4 都使用只增强训练集的 InterACT-compatible 训练。增强由环境变量控制：
+当前 T2-T4 都使用只增强训练集的 ACT 训练。增强由环境变量控制：
 
 ```bash
 ACT_AUG=1
@@ -593,7 +595,7 @@ InterACT 输出目录：
 external/robotwin_local/policy/inter-act/inter_act_ckpt/
 ```
 
-## 15. 提交
+## 15. 官方 ACT 提交
 
 准备 token：
 
@@ -628,6 +630,8 @@ make submit TRACK=T4
 ```
 
 T2/T3/T4 提交时脚本会附带 `external/robotwin_local` 代码包。
+
+注意：官方评测端会按提交包内的 ACT 推理配置加载 checkpoint，因此 `policy/ACT/deploy_policy.yml` 或指定 deploy config 必须和训练结构一致。最容易出错的是 `hidden_dim`、`chunk_size`、`dim_feedforward`、相机顺序、`policy_class` 和 checkpoint 文件名。
 
 ## 16. 常见问题
 
